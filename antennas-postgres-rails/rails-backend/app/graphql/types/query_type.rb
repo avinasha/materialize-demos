@@ -4,14 +4,20 @@ module Types
     include GraphQL::Types::Relay::HasNodeField
     include GraphQL::Types::Relay::HasNodesField
 
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
+    field :getAntennas, [Types::AntennaType], null: false,
+      description: "Gets all the antennas."
+    def getAntennas
+      mdb = {
+	      :host=>"localhost",
+	      :port=>6875,
+	      :user=>"materialize",
+	      :password=>"materialize",
+	      :dbname=>"materialize"
+      }
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+      conn = PG.connect(mdb)
+      result = conn.exec("SELECT * FROM antennas;");
+      result.to_a
     end
   end
 end
